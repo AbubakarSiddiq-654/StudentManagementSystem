@@ -1,16 +1,24 @@
-import java.util.Scanner;
+ import java.util.Scanner;
 
 public class StudentManagementSystem {
 
-    public static void main(String[] args) {
+    
+    static String[] studentNames = new String[250];
+    static String[] studentIDs = new String[250];
+    static int[] studentAges = new int[250];
+    static String[] semester = new String[250];
+    static String[] emails = new String[250];
+    static String[] studentAddresses = new String[250];
+    static int studentCount = 0;
 
+    public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         int choice;
 
         do {
             System.out.println("\n***************************");
             System.out.println("   STUDENT MANAGEMENT SYSTEM");
-            System.out.println("******************************");
+            System.out.println("***************************");
             System.out.println("1. Admin Portal");
             System.out.println("2. Student Portal");
             System.out.println("3. Exit");
@@ -18,7 +26,6 @@ public class StudentManagementSystem {
             choice = input.nextInt();
 
             switch (choice) {
-
                 case 1:
                     showAdminPortal();
                     break;
@@ -28,59 +35,67 @@ public class StudentManagementSystem {
                 case 3:
                     System.out.println("Exiting system...");
                     break;
-
                 default:
                     System.out.println("Invalid choice! Try again.");
             }
         } while (choice != 3);
+
         input.close();
     }
 
     public static void showAdminPortal() {
         Scanner input = new Scanner(System.in);
-        int choice ;
-        do{
-           System.out.println("\n===== ADMIN PORTAL =====");
-           System.out.println("1. Add Student");
-           System.out.println("2. View Students");
-           System.out.println("3. Add Course");
-           System.out.println("4. View Courses");
-           System.out.println("5. Enroll Student");
-           System.out.println("6. View Enrollments");
-           System.out.println("7. Logout");
-           System.out.println("--------------------------");
-          choice = input.nextInt();
-          switch(choice){
-            case 1:
-                addstudent();
-                break;
-            case 2:
-                viewStudents();
-                break;
+        System.out.print("Enter username: ");
+        String username = input.next();
+        System.out.print("Enter password: ");
+        String password = input.next();
 
-            case 3:
-                addCourse();
-                break;
-            case 4:
-                viewCourses();
-                break;
-            case 5:
-                enrollStudent();
-                break;
-            case 6:
-                viewEnrollemnets();
-                break;
-            case 7:
-                System.out.println("Logging out...");  
-                break;
-            default:
-                System.out.println("Invalid choice  ! Try again.");   
-          }
-        
-
-     
-
+        if (!username.equals("Abubakar") || !password.equals("12345")) {
+            System.out.println("Invalid credentials! Please try again.");
+            return;
         }
+
+        System.out.println("Login successful!");
+
+        int choice;
+        do {
+             System.out.println("\n===== ADMIN PORTAL =====");
+        System.out.println("1. Add Student");
+        System.out.println("2. View Students");
+        System.out.println("3. Add Course");
+        System.out.println("4. View Courses");
+        System.out.println("5. Enroll Student");
+        System.out.println("6. View Enrollments");
+        System.out.println("7. Logout");
+        System.out.println("--------------------------");
+            choice = input.nextInt();
+
+            switch (choice) {
+                case 1:
+                    addStudent();
+                    break;
+                case 2:
+                    viewStudents();
+                    break;
+                case 3:
+                    addCourse();
+                    break;
+                    acse 4:
+                    viewCourses();
+                    break;
+                case 5:
+                    enrollStudent();
+                    break;
+                case 6:
+                    viewErollments();
+                    break;
+                case 7:
+                    System.out.println("Logging out...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+        } while (choice != 7);
     }
 
     public static void showStudentPortal() {
@@ -91,5 +106,55 @@ public class StudentManagementSystem {
         System.out.println("4. Cgpa");
         System.out.println("5. Logout");
         System.out.println("*************************");
+    }
+
+    public static void addStudent() {
+        Scanner sc = new Scanner(System.in);
+
+        if (studentCount >= 250) {
+            System.out.println("Student limit reached!");
+            return;
+        }
+
+        System.out.println("\n--- Add New Student ---");
+        System.out.print("Enter Student Name: ");
+        studentNames[studentCount] = sc.nextLine();
+
+        System.out.print("Enter Student ID: ");
+        studentIDs[studentCount] = sc.nextLine();
+
+        System.out.print("Enter Student Age: ");
+        studentAges[studentCount] = sc.nextInt();
+        sc.nextLine(); // consume leftover newline
+
+        System.out.print("Enter Semester: ");
+        semester[studentCount] = sc.nextLine();
+
+        System.out.print("Enter Email: ");
+        emails[studentCount] = sc.nextLine();
+
+        System.out.print("Enter Address: ");
+        studentAddresses[studentCount] = sc.nextLine();
+
+        studentCount++;
+        System.out.println("Student added successfully!");
+    }
+
+    public static void viewStudents() {
+        if (studentCount == 0) {
+            System.out.println("No students available.");
+            return;
+        }
+
+        System.out.println("\n====== STUDENT LIST ======");
+        for (int i = 0; i < studentCount; i++) {
+            System.out.println("Student Name: " + studentNames[i]);
+            System.out.println("Student ID: " + studentIDs[i]);
+            System.out.println("Age: " + studentAges[i]);
+            System.out.println("Semester: " + semester[i]);
+            System.out.println("Email: " + emails[i]);
+            System.out.println("Address: " + studentAddresses[i]);
+            System.out.println("-------------------------");
+        }
     }
 }
