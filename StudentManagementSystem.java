@@ -92,9 +92,11 @@
             System.out.println("3. Add Course");
             System.out.println("4. View Courses");
             System.out.println("5. Enroll Student");
-            System.out.println("6.Enter student marks :");
-            System.out.println("7. View Enrollments");
-            System.out.println("8. Logout");
+             System.out.println("6. Search Student");
+            System.out.println("7 .update student ");
+            System.out.println("8. Enter marks");
+            System.out.println("9. View Enrollments");         
+            System.out.println("10. Logout");
             System.out.println("--------------------------");
             System.out.println("Enter the choice :");
             
@@ -126,18 +128,24 @@
                         enrollStudent();
                         break;
                     case 6:
-                        enterMarks();
+                        searchStudent();
                         break;
                     case 7:
-                        viewEnrollments();
+                        updateStudent();
                         break;
                     case 8:
+                        enterMarks();
+                        break;
+                    case 9:
+                        viewEnrollments();
+                        break;
+                    case 10:
                         System.out.println("Logging out...");
                         break;
                     default:
                         System.out.println("Invalid choice! Try again.");
                 }
-            } while (choice != 8);
+            } while (choice != 10);
         }
 
         public static void showStudentPortal() {
@@ -192,7 +200,7 @@
                     break;
 
                  case 2:
-                    viewEnrollments();
+                    viewMyEnrollments(studentIDs[studentIndex]);
                     break;
 
                 case 3:
@@ -318,48 +326,73 @@
                 System.out.println("An error occured while saving data.");
             }
         }
-         public static void loadMarks() {
-    try {
-        File f = new File("Marks.txt");
-        if (!f.exists()) return;
+       public static void loadMarks() {
+    File f = new File("Marks.txt");
+    if (!f.exists()) return;
 
-        Scanner fileScanner = new Scanner(f);
-
+    try (Scanner fileScanner = new Scanner(f)) {
         while (fileScanner.hasNextLine()) {
             String id = fileScanner.nextLine();
             int studentIndex = -1;
-
             for (int i = 0; i < studentCount; i++) {
                 if (studentIDs[i].equals(id)) {
                     studentIndex = i;
                     break;
                 }
             }
-
             for (int j = 0; j < subjectCount; j++) {
-                if (!fileScanner.hasNextLine()) {
-                    marks[studentIndex != -1 ? studentIndex : 0][j] = 0;
-                    continue;
-                }
-
-                String line = fileScanner.nextLine();
-                try {
-                    int mark = Integer.parseInt(line);
-                    if (mark < 0 || mark > 100) mark = 0;
+                if (fileScanner.hasNextLine()) {
+                    String line = fileScanner.nextLine();
+                    int mark = 0;
+                    try {
+                        mark = Integer.parseInt(line);
+                        if (mark < 0 || mark > 100) mark = 0;
+                    } catch (NumberFormatException e) {
+                        mark = 0;
+                    }
                     if (studentIndex != -1) marks[studentIndex][j] = mark;
-                } catch (NumberFormatException e) {
-                    if (studentIndex != -1) marks[studentIndex][j] = 0;
                 }
             }
         }
-
-        fileScanner.close();
-        System.out.println("Marks loaded successfully!");
     } catch (IOException e) {
         System.out.println("An error occurred while loading marks.");
     }
 }
 
+      public static void viewMyEnrollments(String studentID) {
+
+    File f = new File("Enrollments.txt");
+
+    if (!f.exists()) {
+        System.out.println("No enrollments found.");
+        return;
+    }
+
+    boolean found = false;
+
+    try {
+        Scanner fileScanner = new Scanner(f);
+        System.out.println("\n--- My Enrollments ---");
+
+        while (fileScanner.hasNextLine()) {
+            String line = fileScanner.nextLine();
+
+            if (line.contains("Student ID: " + studentID)) {
+                System.out.println(line);
+                found = true;
+            }
+        }
+
+        fileScanner.close();
+
+        if (!found) {
+            System.out.println("You are not enrolled in any course.");
+        }
+
+    } catch (IOException e) {
+        System.out.println("Error reading enrollments.");
+    }
+          }
 
 
           public static void loadData() {
@@ -392,12 +425,11 @@
                 }
             }
 
-            if (scFile.hasNextLine()) semester[i] = scFile.nextLine();
-            if (scFile.hasNextLine()) department[i] = scFile.nextLine();
-            if (scFile.hasNextLine()) studentPasswords[i] = scFile.nextLine();
-            if (scFile.hasNextLine()) program[i] = scFile.nextLine();
-            if (scFile.hasNextLine()) emails[i] = scFile.nextLine();
-            if (scFile.hasNextLine()) studentAddresses[i] = scFile.nextLine();
+             if (scFile.hasNextLine()) semester[i] = scFile.nextLine();
+             if (scFile.hasNextLine()) studentPasswords[i] = scFile.nextLine();
+             if (scFile.hasNextLine()) department[i] = scFile.nextLine();
+             if (scFile.hasNextLine()) program[i] = scFile.nextLine();
+
         }
 
         scFile.close();
@@ -539,33 +571,36 @@
 
 
 
-            public static void viewEnrollments(){
-                try{
-                    File f = new File ("Enrollments.txt");
+            public static void viewEnrollments() {
+    try {
+        File f = new File("Enrollments.txt");
 
-                    if(!f.exists()){
-                        System.out.println("No enrollements found .");
-                        return;
+        if (!f.exists()) {
+            System.out.println("No enrollments found.");
+            return;
+        }
 
-                    }
-                    Scanner sc = new Scanner (f);
-                    System.out.println("\n----ENROLLMENT LIST ----");
+        System.out.println("\n----ENROLLMENT LIST ----");
 
-                    while(sc.hasNextLine()){
-                        String line = sc.nextLine ();
-                        System.out.println(line);
-                    }
-                    sc.close();  
-                }catch(IOException e){
-                    System.out.println("File is not found " );
-                }
-            }
+        Scanner fileScanner = new Scanner(f);
+        while (fileScanner.hasNextLine()) {
+            String line = fileScanner.nextLine();
+            System.out.println(line);
+        }
+        fileScanner.close(); 
+
+    } catch (IOException e) {
+        System.out.println("File is not found.");
+    }
+}
+
            public static void saveMarks() {
     try {
         FileWriter file = new FileWriter("Marks.txt");
         PrintWriter pr = new PrintWriter(file);
 
         for (int i = 0; i < studentCount; i++) {
+            pr.println(studentIDs[i]); // SAVE ID FIRST
             for (int j = 0; j < subjectCount; j++) {
                 pr.println(marks[i][j]);
             }
@@ -579,6 +614,99 @@
     }
 }
 
+ public static void searchStudent() {
+
+    if (studentCount == 0) {
+        System.out.println("No students available to search.");
+        return;
+    }
+
+    System.out.print("Enter Student ID to search: ");
+    String id = sc.nextLine();
+
+    int index = -1;
+    for (int i = 0; i < studentCount; i++) {
+        if (id.equals(studentIDs[i])) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        System.out.println("Student not found!");
+        return;
+    }
+
+    System.out.println("\n--- Student Found ---");
+    System.out.println("Name       : " + studentNames[index]);
+    System.out.println("Student ID : " + studentIDs[index]);
+    System.out.println("Age        : " + studentAges[index]);
+    System.out.println("Semester   : " + semester[index]);
+    System.out.println("Department : " + department[index]);
+    System.out.println("Program    : " + program[index]);
+    System.out.println("Email      : " + emails[index]);
+    System.out.println("Address    : " + studentAddresses[index]);
+}
+   
+     public static void updateStudent() {
+
+    if (studentCount == 0) {
+        System.out.println("No students available to update.");
+        return;
+    }
+
+    System.out.print("Enter Student ID to update: ");
+    String id = sc.nextLine();
+
+    int index = -1;
+    for (int i = 0; i < studentCount; i++) {
+        if (id.equals(studentIDs[i])) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        System.out.println("Student not found!");
+        return;
+    }
+
+    System.out.println("\nUpdating record for: " + studentNames[index]);
+
+    // AGE (validated)
+    int age;
+    while (true) {
+        System.out.print("Enter new Age (17–60): ");
+        if (sc.hasNextInt()) {
+            age = sc.nextInt();
+            if (age >= 17 && age <= 60) {
+                studentAges[index] = age;
+                break;
+            } else {
+                System.out.println("Age must be between 17 and 60.");
+            }
+        } else {
+            System.out.println("Invalid input! Enter numbers only.");
+            sc.next();
+        }
+    }
+    sc.nextLine(); 
+
+    
+    System.out.print("Enter new Semester: ");
+    semester[index] = sc.nextLine();
+
+   
+    System.out.print("Enter new Email: ");
+    emails[index] = sc.nextLine();
+
+    
+    System.out.print("Enter new Address: ");
+    studentAddresses[index] = sc.nextLine();
+
+    saveData();
+    System.out.println("Student record updated successfully!");
+}
 
         
 
